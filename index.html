@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic-Tac-Toe Game</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        #main {
+            text-align: center; 
+            padding: 40px 200px;
+        }
+
+        #heading {
+            padding-bottom: 40px;
+        }
+
+        #gameBox {
+            width: 100%;
+            height: 300px;
+            border: 1px solid black;
+        }
+        .clmn {
+            width: 100%;
+            height: 100px;
+            border: 1px solid black ;
+            display: flex;
+        }
+        .box {
+            width: 100%;
+            height: 100px;
+            border: 1px solid black ;
+            display: flex;
+            justify-content: center;
+            font-size: 80px;
+        }
+
+        #result {
+            padding-top: 40px;
+            padding-bottom: 40px;
+            display: none;
+        }
+
+        #retry {
+            width: 80px;
+            height: 40px;
+            font-size: 20px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="main">
+        <h1 id="heading">Tic Tac Toe</h1>
+        <div id="gameBox">
+            <div class="clmn">
+                <div class="box"></div>
+                <div class="box"></div>
+                <div class="box"></div>
+            </div>
+            <div class="clmn">
+                <div class="box"></div>
+                <div class="box"></div>
+                <div class="box"></div>
+            </div>
+            <div class="clmn">
+                <div class="box"></div>
+                <div class="box"></div>
+                <div class="box"></div>
+            </div>
+        </div>
+        <h3 id="result"></h3>
+        <button id="retry" onclick="newStart()">Retry</button>
+    </div>
+
+    <script>
+        const boxes = document.querySelectorAll(".box");
+        const retry = document.querySelector("#retry");
+        const result = document.querySelector("#result");
+
+        let turn = 0;
+        function markBox(boxNo, isGameOver) {
+            if(boxes[boxNo].getAttribute("value") || isGameOver) return;
+
+            if(turn%2 == 0) {
+                boxes[boxNo].innerHTML = "X"; // User ko dikhane ke liye ye daal rahe hai
+                boxes[boxNo].setAttribute("value", "X"); // ye actual value hai jo hum store kar rhe hai
+            } else {
+                boxes[boxNo].innerHTML = "O";
+                boxes[boxNo].setAttribute("value", "O");
+            }
+            turn++; 
+        }
+
+        function checkMoves(currElements) {
+            let moves = [];
+            for(let i=0;i<=currElements;i++) {
+                let val = boxes[i].getAttribute("value");
+                moves.push(val);
+            }
+
+            for(let i=0;i<moves.length;i+=3) {
+                const val1 = moves[i];
+                const val2 = moves[i+1];
+                const val3 = moves[i+2];
+                if(val1 && val1 === val2 && val2 === val3) {
+                    return val1;
+                }
+            }
+
+            for(let i=0;i<3;i++) {
+                const val1 = moves[i];
+                const val2 = moves[i+3];
+                const val3 = moves[i+6];
+                if(val1 && val1 === val2 && val2 === val3) {
+                    return val1;
+                }
+            }
+            
+            if(moves[0] && moves[0] === moves[4] && moves[4] === moves[8]) return moves[0];
+            if(moves[2] && moves[2] === moves[4] && moves[4] === moves[6]) return moves[2];
+
+            return null;
+        }
+        
+        function newStart() {
+            turn = 0;
+            let isGameOver = false;
+
+            for(let i = 0; i < boxes.length; i++) {
+                boxes[i].innerHTML = '';
+                boxes[i].setAttribute("value", "")
+            }
+
+            result.style.display = "none";
+            retry.style.display = "none";
+
+            for(let i = 0; i < boxes.length; i++) {
+                boxes[i].addEventListener("click", function() {
+                    markBox(i, isGameOver);
+
+                    if(turn >= boxes.length) {
+                        isGameOver = true;
+                        result.style.display = "block";
+                        retry.style.display = "inline";
+                        result.innerHTML = "Draw";
+                        result.style.color = "red";
+                    }
+
+                    if(turn >= 4) {
+                        let winner = checkMoves(i);
+                        console.log("winner >> ", winner)
+                        if(winner) {
+                            console.log("WINNNNER:: ", winner + " WoN win")
+                            isGameOver = true;
+                            result.innerHTML = winner + ' won the Game!!';
+                            result.style.color = "green";
+                            result.style.display = "block";
+                            retry.style.display = "inline";
+                        } 
+                    }
+                });
+            }
+        }
+
+        newStart();
+
+    </script>
+</body>
+</html>
