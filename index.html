@@ -11,19 +11,21 @@
             box-sizing: border-box;
         }
 
-        #main {
-            text-align: center; 
-            padding: 40px 200px;
-        }
-
-        #heading {
-            padding-bottom: 40px;
+        #main { 
+            width: 100%;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
         }
 
         #gameBox {
             width: 100%;
             height: 300px;
             border: 1px solid black;
+            max-width: 800px;
         }
         .clmn {
             width: 100%;
@@ -41,8 +43,6 @@
         }
 
         #result {
-            padding-top: 40px;
-            padding-bottom: 40px;
             display: none;
         }
 
