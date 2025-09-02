@@ -75,7 +75,7 @@
             </div>
         </div>
         <h3 id="result"></h3>
-        <button id="retry" onclick="newStart()">Retry</button>
+        <button id="retry">Retry</button>
     </div>
 
     <script>
@@ -84,22 +84,55 @@
         const result = document.querySelector("#result");
 
         let turn = 0;
-        function markBox(boxNo, isGameOver) {
+        let isGameOver = false;
+
+        const handleClick = (boxNumber) => {
+            if(isGameOver) {
+                return;
+            }
+            markBox(boxNumber);
+            if(turn >= 4) {
+                let winner = checkMoves();
+                if(winner) {
+                    isGameOver = true;
+                    result.textContent = winner + ' won the Game!!';
+                    result.style.color = "green";
+                    result.style.display = "block";
+                    retry.style.display = "inline";
+                } else {
+                    if(turn >= boxes.length) {
+                        isGameOver = true;
+                        result.textContent = "Draw";
+                        result.style.color = "red";
+                        result.style.display = "block";
+                        retry.style.display = "inline";
+                    }
+                }
+            }
+        }
+
+        for(let i = 0; i < boxes.length; i++) {
+            boxes[i].addEventListener("click", () => {
+                handleClick(i);
+            });
+        }
+        
+        function markBox(boxNo) {
             if(boxes[boxNo].getAttribute("value") || isGameOver) return;
 
             if(turn%2 == 0) {
-                boxes[boxNo].innerHTML = "X"; // User ko dikhane ke liye ye daal rahe hai
+                boxes[boxNo].textContent = "X"; // User ko dikhane ke liye ye daal rahe hai
                 boxes[boxNo].setAttribute("value", "X"); // ye actual value hai jo hum store kar rhe hai
             } else {
-                boxes[boxNo].innerHTML = "O";
+                boxes[boxNo].textContent = "O";
                 boxes[boxNo].setAttribute("value", "O");
             }
             turn++; 
         }
 
-        function checkMoves(currElements) {
+        function checkMoves() {
             let moves = [];
-            for(let i=0;i<=currElements;i++) {
+            for(let i=0;i< boxes.length;i++) {
                 let val = boxes[i].getAttribute("value");
                 moves.push(val);
             }
@@ -129,44 +162,18 @@
         }
         
         function newStart() {
+            // reset all the states
             turn = 0;
-            let isGameOver = false;
-
+            isGameOver = false;
             for(let i = 0; i < boxes.length; i++) {
-                boxes[i].innerHTML = '';
-                boxes[i].setAttribute("value", "")
+                boxes[i].textContent = '';
+                boxes[i].removeAttribute("value");
             }
-
             result.style.display = "none";
             retry.style.display = "none";
-
-            for(let i = 0; i < boxes.length; i++) {
-                boxes[i].addEventListener("click", function() {
-                    markBox(i, isGameOver);
-
-                    if(turn >= boxes.length) {
-                        isGameOver = true;
-                        result.style.display = "block";
-                        retry.style.display = "inline";
-                        result.innerHTML = "Draw";
-                        result.style.color = "red";
-                    }
-
-                    if(turn >= 4) {
-                        let winner = checkMoves(i);
-                        console.log("winner >> ", winner)
-                        if(winner) {
-                            console.log("WINNNNER:: ", winner + " WoN win")
-                            isGameOver = true;
-                            result.innerHTML = winner + ' won the Game!!';
-                            result.style.color = "green";
-                            result.style.display = "block";
-                            retry.style.display = "inline";
-                        } 
-                    }
-                });
-            }
         }
+
+        retry.addEventListener("click", newStart);
 
         newStart();
 
